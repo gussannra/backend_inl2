@@ -22,8 +22,7 @@ public class Customer {
 	//@OneToMany(cascade=CascadeType.ALL)
 	private List<Call> calls;
 
-	public Customer(String customerId, String companyName, String email,
-			             String telephone, String notes) {
+	public Customer(String customerId, String companyName, String email, String telephone, String notes) {
 		this(customerId, companyName, notes);
 		this.email = email;
 		this.telephone = telephone;
