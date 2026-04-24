@@ -4,6 +4,7 @@
 <beans>
 
     <!-- DataSources -->
+    <!-- Connection pool for production -->
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:file:database.dat;shutdown=true"/>

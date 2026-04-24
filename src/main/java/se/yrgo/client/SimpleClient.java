@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import se.yrgo.dataaccess.CustomerDao;
 import se.yrgo.domain.Action;
 import se.yrgo.domain.Call;
 import se.yrgo.domain.Customer;
@@ -46,6 +48,83 @@ public class SimpleClient {
             Collection<Action> incompleteActions = diaryService.getAllIncompleteActions("rac");
             for (Action next : incompleteActions) {
                 System.out.println(next);
+            }
+
+            // Test getting all customers
+            System.out.println("\nTEST GETTING ALL CUSTOMERS... ");
+            List<Customer> customerList = customerService.getAllCustomers();
+            for (Customer customer : customerList) {
+                System.out.println(customer);
+            }
+
+            // Test creating new customers
+            customerService.newCustomer(new Customer("ABC123", "Rolling", "Nice customer"));
+            customerService.newCustomer(new Customer("DEF456", "Splash", "Super customer"));
+            customerService.newCustomer(new Customer("GHI789", "DRUMS", "Want to get it touch with Jerry."));
+
+            // Test getting new customers
+            System.out.println("\nTEST IF ADDING NEW CUSTOMERS WORKED... ");
+            List<Customer> getAllCustomersAfterAdding = customerService.getAllCustomers();
+            for (Customer customer : getAllCustomersAfterAdding) {
+                System.out.println(customer);
+            }
+
+            // Test updating customer info
+            try {
+                Customer customer1 = customerService.findCustomerById("ABC123");
+                System.out.println("\nUPDATING CUSTOMER COMPANY NAME... ");
+                customer1.setCompanyName("Big Company");
+
+                customerService.updateCustomer(customer1);
+                Customer customer1Updated = customerService.findCustomerById("ABC123");
+                System.out.println("UPDATED CUSTOMER: " + customer1Updated.getCustomerId() + " and updated company name " + customer1Updated.getCompanyName());
+
+            } catch (CustomerNotFoundException e) {
+                System.err.println("Customer not found.");
+            }
+
+            // Test getting all customers
+            System.out.println("\nTEST GETTING ALL CUSTOMERS AGAIN... ");
+            List<Customer> anotherCustomerList = customerService.getAllCustomers();
+            for (Customer customer : anotherCustomerList) {
+                System.out.println(customer);
+            }
+
+            // Test finding customer by name
+            try {
+                System.out.println("\nTEST GETTING CUSTOMERS BY NAME... ");
+                List<Customer> customerByNameList = customerService.findCustomersByName("Big Company");
+                for (Customer customer : customerByNameList) {
+                    System.out.println(customer);
+                }
+            } catch (CustomerNotFoundException e) {
+                System.err.println("Customer not found.");
+            }
+
+            // Test getting full customer detail
+            try {
+                Customer customerDetails = customerService.getFullCustomerDetail("CS03939");
+                System.out.println("\nCUSTOMER DETAILS FOR " + customerDetails);
+                List<Call> customerDetailsCalls = customerDetails.getCalls();
+                for (Call call : customerDetailsCalls) {
+                    System.out.println(call);
+                }
+            } catch (CustomerNotFoundException e) {
+                System.err.println("Customer not found.");
+            }
+
+            // Test deleting a customer
+            try {
+                Customer customerToDelete = customerService.findCustomerById("ABC123");
+                System.out.println("\nTEST DELETING CUSTOMER: " + customerToDelete);
+                customerService.deleteCustomer(customerToDelete);
+
+                List<Customer> listAfterDeletedCustomer = customerService.getAllCustomers();
+                for (Customer customer : listAfterDeletedCustomer) {
+                    System.out.println(customer);
+                }
+            } catch (CustomerNotFoundException e) {
+                System.err.println("Customer you want to delete could not be found.");
             }
 
         }

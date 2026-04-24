@@ -50,8 +50,12 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
     }
 
     @Override
-    public List<Customer> findCustomersByName(String name) {
-        return dao.getByName(name);
+    public List<Customer> findCustomersByName(String name) throws CustomerNotFoundException {
+        try {
+            return dao.getByName(name);
+        } catch (RecordNotFoundException e) {
+            throw new CustomerNotFoundException();
+        }
     }
 
     @Override

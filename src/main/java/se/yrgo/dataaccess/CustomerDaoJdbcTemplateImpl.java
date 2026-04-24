@@ -25,9 +25,8 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
     private static final String UPDATE_CUSTOMER_SQL = "UPDATE CUSTOMER SET COMPANY_NAME=?, EMAIL=?, TELEPHONE=?, NOTES=? WHERE CUSTOMER_ID=?";
     private static final String DELETE_CUSTOMER_SQL = "delete from CUSTOMER where CUSTOMER_ID=?";
     private static final String GET_ALL_CUSTOMERS_SQL = "select * from CUSTOMER";
-    private static final String GET_FULL_CUSTOMER_DETAIL_SQL = "";
     private static final String ADD_CALL_SQL = "insert into CALL_TBL(TIME_DATE, NOTES, CUSTOMER_ID) values (?, ?, ?)";
-
+    private static final String GET_CALLS_BY_CUSTOMER_ID_SQL = "select* from CALL_TBL where CUSTOMER_ID=?";
 
     public CustomerDaoJdbcTemplateImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -48,12 +47,12 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
     }
 
     @Override
-    public Customer getById(String customerId) {
+    public Customer getById(String customerId) throws RecordNotFoundException {
         return jdbcTemplate.queryForObject(GET_CUSTOMER_BY_ID_SQL, new CustomerMapper(), customerId);
     }
 
     @Override
-    public List<Customer> getByName(String name) {
+    public List<Customer> getByName(String name) throws RecordNotFoundException {
         return jdbcTemplate.query(GET_CUSTOMERS_BY_NAME_SQL, new CustomerMapper(), name);
     }
 
@@ -75,11 +74,9 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
 
     @Override
     public Customer getFullCustomerDetail(String customerId) throws RecordNotFoundException {
-        Customer customer = jdbcTemplate.queryForObject("select * from CUSTOMER where CUSTOMER_ID=?", new CustomerMapper(), customerId);
-        List<Call> calls = jdbcTemplate.query("select* from CALL_TBL where CUSTOMER_ID=?", new CallMapper(), customerId);
-
+        Customer customer = jdbcTemplate.queryForObject(GET_CUSTOMER_BY_ID_SQL, new CustomerMapper(), customerId);
+        List<Call> calls = jdbcTemplate.query(GET_CALLS_BY_CUSTOMER_ID_SQL, new CallMapper(), customerId);
         customer.setCalls(calls);
-
         return customer;
     }
 
