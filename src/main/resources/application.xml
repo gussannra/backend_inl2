@@ -18,7 +18,19 @@
 
     <!-- add your bean definitions here! -->
 
-    <bean id="customerService" class="se.yrgo.services.customers.CustomerManagementMockImpl">
+    <bean id="actionDao" class="se.yrgo.dataaccess.ActionDaoJdbcImpl">
+        <constructor-arg ref="jdbcTemplate">
+        </constructor-arg>
+    </bean>
+
+    <bean id="customerDao" class="se.yrgo.dataaccess.CustomerDaoJdbcTemplateImpl" init-method="createTables">
+        <constructor-arg ref="jdbcTemplate">
+        </constructor-arg>
+    </bean>
+
+    <bean id="customerService" class="se.yrgo.services.customers.CustomerManagementServiceProductionImpl">
+        <constructor-arg ref="customerDao">
+        </constructor-arg>
     </bean>
 
     <bean id="diaryService" class="se.yrgo.services.diary.DiaryManagementServiceMockImpl">

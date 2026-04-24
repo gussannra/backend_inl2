@@ -70,14 +70,13 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
     }
 
     @Override
-    public void recordCall(String customerId, Call callDetails) {
+    public void recordCall(String customerId, Call callDetails) throws CustomerNotFoundException {
 
         try {
             dao.addCall(callDetails, customerId);
         } catch (RecordNotFoundException e) {
             System.err.println("Something went wrong while recording the call.");
-            // TODO: WHICH EXCEPTION?
-            // throw new CustomerNotFoundException();
+            throw new CustomerNotFoundException();
         }
     }
 }
