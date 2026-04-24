@@ -1,11 +1,13 @@
 package se.yrgo.dataaccess;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import se.yrgo.domain.Call;
 import se.yrgo.domain.Customer;
 import se.yrgo.services.customers.CustomerNotFoundException;
 
+import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -48,22 +50,38 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
 
     @Override
     public Customer getById(String customerId) throws RecordNotFoundException {
-        return jdbcTemplate.queryForObject(GET_CUSTOMER_BY_ID_SQL, new CustomerMapper(), customerId);
+        try {
+            return jdbcTemplate.queryForObject(GET_CUSTOMER_BY_ID_SQL, new CustomerMapper(), customerId);
+        } catch (DataAccessException e) {
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override
     public List<Customer> getByName(String name) throws RecordNotFoundException {
-        return jdbcTemplate.query(GET_CUSTOMERS_BY_NAME_SQL, new CustomerMapper(), name);
+        try {
+            return jdbcTemplate.query(GET_CUSTOMERS_BY_NAME_SQL, new CustomerMapper(), name);
+        } catch (DataAccessException e) {
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override
     public void update(Customer customerToUpdate) throws RecordNotFoundException {
-        jdbcTemplate.update(UPDATE_CUSTOMER_SQL, customerToUpdate.getCompanyName(), customerToUpdate.getEmail(), customerToUpdate.getTelephone(), customerToUpdate.getNotes(), customerToUpdate.getCustomerId());
+        try {
+            jdbcTemplate.update(UPDATE_CUSTOMER_SQL, customerToUpdate.getCompanyName(), customerToUpdate.getEmail(), customerToUpdate.getTelephone(), customerToUpdate.getNotes(), customerToUpdate.getCustomerId());
+        } catch (DataAccessException e) {
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override
     public void delete(Customer oldCustomer) throws RecordNotFoundException {
-        jdbcTemplate.update(DELETE_CUSTOMER_SQL, oldCustomer.getCustomerId());
+        try {
+            jdbcTemplate.update(DELETE_CUSTOMER_SQL, oldCustomer.getCustomerId());
+        } catch (DataAccessException e) {
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override
@@ -74,15 +92,23 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao {
 
     @Override
     public Customer getFullCustomerDetail(String customerId) throws RecordNotFoundException {
-        Customer customer = jdbcTemplate.queryForObject(GET_CUSTOMER_BY_ID_SQL, new CustomerMapper(), customerId);
-        List<Call> calls = jdbcTemplate.query(GET_CALLS_BY_CUSTOMER_ID_SQL, new CallMapper(), customerId);
-        customer.setCalls(calls);
-        return customer;
+        try {
+            Customer customer = jdbcTemplate.queryForObject(GET_CUSTOMER_BY_ID_SQL, new CustomerMapper(), customerId);
+            List<Call> calls = jdbcTemplate.query(GET_CALLS_BY_CUSTOMER_ID_SQL, new CallMapper(), customerId);
+            customer.setCalls(calls);
+            return customer;
+        } catch (DataAccessException e) {
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override
     public void addCall(Call newCall, String customerId) throws RecordNotFoundException {
-        jdbcTemplate.update(ADD_CALL_SQL, newCall.getTimeAndDate(), newCall.getNotes(), customerId);
+        try {
+            jdbcTemplate.update(ADD_CALL_SQL, newCall.getTimeAndDate(), newCall.getNotes(), customerId);
+        } catch (DataAccessException e) {
+            throw new RecordNotFoundException();
+        }
     }
 
     class CustomerMapper implements RowMapper<Customer> {

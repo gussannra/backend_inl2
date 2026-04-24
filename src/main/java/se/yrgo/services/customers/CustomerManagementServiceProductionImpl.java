@@ -24,7 +24,6 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
         try {
             dao.update(changedCustomer);
         } catch (RecordNotFoundException e) {
-            System.err.println("Could not find customer: " + changedCustomer);
             throw new CustomerNotFoundException();
         }
     }
@@ -34,7 +33,6 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
         try {
             dao.delete(oldCustomer);
         } catch (RecordNotFoundException e) {
-            System.err.println("Could not find customer: " + oldCustomer);
             throw new CustomerNotFoundException();
         }
     }
@@ -44,7 +42,6 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
         try {
             return dao.getById(customerId);
         } catch (RecordNotFoundException e) {
-            System.err.println("Could not find customer with customerId: " + customerId);
             throw new CustomerNotFoundException();
         }
     }
@@ -68,7 +65,6 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
         try {
             return dao.getFullCustomerDetail(customerId);
         } catch (RecordNotFoundException e) {
-            System.err.println("Something went wrong while getting customer with customerId: " + customerId);
             throw new CustomerNotFoundException();
         }
     }
@@ -79,7 +75,6 @@ public class CustomerManagementServiceProductionImpl implements CustomerManageme
         try {
             dao.addCall(callDetails, customerId);
         } catch (RecordNotFoundException e) {
-            System.err.println("Something went wrong while recording the call.");
             throw new CustomerNotFoundException();
         }
     }

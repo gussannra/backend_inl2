@@ -21,8 +21,7 @@ public class SimpleClient {
 
     public static void main(String[] args) {
 
-        try (ClassPathXmlApplicationContext container =
-                     new ClassPathXmlApplicationContext("application.xml")) {
+        try (ClassPathXmlApplicationContext container = new ClassPathXmlApplicationContext("application.xml")) {
 
             CustomerManagementService customerService = container.getBean(CustomerManagementService.class);
             CallHandlingService callService = container.getBean(CallHandlingService.class);
@@ -125,6 +124,14 @@ public class SimpleClient {
                 }
             } catch (CustomerNotFoundException e) {
                 System.err.println("Customer you want to delete could not be found.");
+            }
+
+            // Test exceptions kedja
+            System.out.println("\nTEST EXCEPTIONS... ");
+            try {
+                customerService.findCustomerById("jdhfj");
+            } catch (CustomerNotFoundException e) {
+                System.err.println("Customer not found.");
             }
 
         }
